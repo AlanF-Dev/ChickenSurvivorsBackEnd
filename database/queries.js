@@ -2,7 +2,7 @@ const database = require('./databaseConnection');
 
 const getUser = async(data) => {
     let getUserSQL = `
-        SELECT user_id, username, email, password, drip, theme
+        SELECT *
         FROM user
         WHERE username = (?);
     `;
@@ -33,10 +33,30 @@ const createUser = async(data) => {
         return {success: true}
     }
     catch(e){
+        console.log(e);
+        return {success: false}
+    }
+}
+
+const save = async(data) => {
+    let saveSQL = `
+        UPDATE user
+        SET wave = (?), time = (?), exp = (?), health = (?)
+        WHERE user_id = (?);
+    `
+
+    let param = [data.wave, data.time, data.exp, data.health, data.user_id];
+
+    try{
+        await database.query(saveSQL, param);
+        return {success: true}
+    }
+    catch(e){
+        console.log(e);
         return {success: false}
     }
 }
 
 module.exports = {
-    getUser, createUser
+    getUser, createUser, save
 }

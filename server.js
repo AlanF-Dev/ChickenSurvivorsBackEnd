@@ -66,9 +66,7 @@ app.get('/', (req, res) => {
 
 //API routes
 
-
-// User section
-app.post('/loginUser', async (req, res) => {
+app.post('/login', async (req, res) => {
     const result = await db_query.getUser({username: req.body.username});
 
     if (result.user === undefined){
@@ -93,17 +91,32 @@ app.post('/loginUser', async (req, res) => {
         res.json({success: false, message: "The password does not match..."})
     }
     
-    
 })
 
-app.post('/createUser', async (req, res) => {
-
+app.post('/signup', async (req, res) => {
+    console.log(req.body.username);
     const result = await db_query.createUser({
         username: req.body.username,
         email: req.body.email,
         password: req.body.password
     });
+    console.log(result);
     res.json(result)
+})
+
+app.post('/save', async (req, res) => {
+    req.sessionStore.get(req.body.session, async(err, session) => {
+        if (session.authenticated){
+            let result = await db_query.save({
+                user_id: session.user_id,
+                wave: req.body.wave,
+                time: req.body.time,
+                exp: req.body.exp,
+                health: req.body.health
+            })
+        }
+    })
+    res.json();
 })
 
 connectDB().then(() => {
