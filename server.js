@@ -119,6 +119,19 @@ app.post('/save', async (req, res) => {
     res.json();
 })
 
+app.post('/load', async (req, res) => {
+    console.log("loading");
+    req.sessionStore.get(req.body.session, async(err, session) => {
+        if (session.authenticated){
+            let result = await db_query.load({
+                user_id: session.user_id,
+            })
+            console.log(result);
+            res.json(result)
+        }
+    })
+})
+
 connectDB().then(() => {
     app.listen(PORT, () => {
         console.log(`APP LISTENING ON PORT: ${PORT}`)

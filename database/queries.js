@@ -57,6 +57,24 @@ const save = async(data) => {
     }
 }
 
+const load = async(data) => {
+    let loadSQL = `
+        SELECT wave, time, exp, health
+        FROM user
+        WHERE user_id = (?);
+    `;
+
+    let param = [data.user_id];
+
+    try{
+        const results = await database.query(loadSQL, param);
+        return results[0][0];
+    }
+    catch(e){
+        return {success: false}
+    }
+}
+
 module.exports = {
-    getUser, createUser, save
+    getUser, createUser, save, load
 }
